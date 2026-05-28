@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title id="pg-title">Nexarion Zone</title>
+<title id="pg-title">Organic Foods</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet"/>
 <style>
@@ -33,10 +33,7 @@ textarea{resize:vertical}
 .fadeUp{animation:fadeUp .3s ease both}
 .zoomIn{animation:zoomIn .22s ease both}
 
-/* Loader */
-#loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:9999;transition:.4s opacity}
-#loader.hide{opacity:0;pointer-events:none}
-.spin-ring{width:34px;height:34px;border-radius:50%;border:3px solid var(--bg3);border-top-color:var(--t);animation:spin .75s linear infinite}
+
 
 /* Toast */
 #toast{position:fixed;bottom:18px;right:18px;z-index:9000;display:flex;flex-direction:column;gap:7px;pointer-events:none}
@@ -115,8 +112,8 @@ nav{position:sticky;top:0;z-index:200;background:#FFFFFFF2;backdrop-filter:blur(
 .disc-bar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,#DC262666,transparent);padding:5px 10px;font-size:11px;font-weight:700;color:#FCA5A5;letter-spacing:.4px}
 .pcard-body{padding:16px 17px}
 .pcard-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;min-height:20px}
-.pcard-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px}
-.pcard-desc{color:var(--sub);font-size:13px;line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pcard-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px;background:rgba(255,255,255,0.85);display:inline-block;padding:2px 6px;border-radius:4px}
+.pcard-desc{color:var(--sub);font-size:13px;line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;background:rgba(255,255,255,0.75);padding:4px 6px;border-radius:4px}
 .price-row{display:flex;align-items:center;gap:7px;margin-bottom:11px;flex-wrap:wrap}
 .p-price{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--t)}
 .p-orig{font-size:12px;color:var(--muted);text-decoration:line-through}
@@ -261,12 +258,6 @@ nav{position:sticky;top:0;z-index:200;background:#FFFFFFF2;backdrop-filter:blur(
 </head>
 <body>
 
-<!-- Loader -->
-<div id="loader">
-  <div class="orb" style="color:var(--t);font-size:21px;letter-spacing:5px;font-weight:700" id="ld-name">NEXARION</div>
-  <div class="spin-ring"></div>
-</div>
-
 <!-- Toast -->
 <div id="toast"></div>
 
@@ -275,7 +266,7 @@ nav{position:sticky;top:0;z-index:200;background:#FFFFFFF2;backdrop-filter:blur(
   <div class="nav-inner">
     <button class="nav-logo" onclick="goPage('store')">
       <div class="nav-mark" id="nav-mark">N</div>
-      <span class="nav-name orb" id="nav-name">NEXARION ZONE</span>
+      <span class="nav-name orb" id="nav-name">ORGANIC FOODS</span>
     </button>
     <div class="nav-sp"></div>
     <button class="nb" id="nb-store" onclick="goPage('store')">Store</button>
@@ -291,7 +282,7 @@ nav{position:sticky;top:0;z-index:200;background:#FFFFFFF2;backdrop-filter:blur(
     <div class="hero-rule"></div>
     <div id="hero-logo-slot"></div>
     <span class="hero-eyebrow" id="hero-eyebrow">PREMIUM COLLECTION</span>
-    <h1 id="hero-title">Nexarion Zone</h1>
+    <h1 id="hero-title">Organic Foods</h1>
     <p id="hero-sub">Where Innovation Meets Commerce</p>
     <div class="hero-btns">
       <button class="btn btn-wa" onclick="doWa()">WhatsApp</button>
@@ -387,7 +378,7 @@ nav{position:sticky;top:0;z-index:200;background:#FFFFFFF2;backdrop-filter:blur(
 
 <script>
 const S={
-  settings:{name:'Nexarion Zone',tagline:'',phone:'',whatsapp:'',address:'',email:'',theme:'#C27A0A',currency:'',logo:''},
+  settings:{name:'Organic Foods',tagline:'',phone:'',whatsapp:'',address:'',email:'',theme:'#C27A0A',currency:'',logo:''},
   products:[],cart:[],user:null,
   page:'store',adminLoggedIn:false,adminTab:'products',
   selProd:null,search:'',cat:'All',
@@ -406,18 +397,16 @@ async function init(){
   const[settings,products]=await Promise.all([api('GET','/settings'),api('GET','/products')]);
   S.settings=settings;S.products=products;
   applyTheme(settings.theme);
-  document.getElementById('ld-name').textContent=settings.name.toUpperCase();
   const ac=await api('GET','/admin/check');S.adminLoggedIn=ac.admin;
   // Silent user — no prompt
   const uid=localStorage.getItem('nx-uid');
   const u=await api('POST','/users',{session_id:sid,name:localStorage.getItem('nx-name')||'Guest'});
   if(u.id){S.user=u;localStorage.setItem('nx-uid',u.id);localStorage.setItem('nx-name',u.name);await loadCart();}
-  hideLoader();showNav();
+  showNav();
   if(IS_ADMIN)S.page='admin';
   render();
 }
 
-function hideLoader(){const l=document.getElementById('loader');l.classList.add('hide');setTimeout(()=>l.remove(),420);}
 function showNav(){document.getElementById('navbar').classList.remove('hidden');updNav();}
 async function loadCart(){
   if(!S.user)return;
@@ -600,7 +589,7 @@ function adminLogin(){api('POST','/admin/login',{password:document.getElementByI
 function adminLogout(){api('POST','/admin/logout').then(()=>{S.adminLoggedIn=false;document.getElementById('adm-login').classList.remove('hidden');document.getElementById('adm-panel').classList.add('hidden');document.getElementById('adm-pass').value='';});}
 function rAdmin(){if(S.adminLoggedIn){document.getElementById('adm-login').classList.add('hidden');showAdm();}else{document.getElementById('adm-login').classList.remove('hidden');document.getElementById('adm-panel').classList.add('hidden');}}
 function showAdm(){document.getElementById('adm-login').classList.add('hidden');document.getElementById('adm-panel').classList.remove('hidden');document.getElementById('adm-sub').textContent=S.settings.name;loadStats();setTab(S.adminTab);}
-async function loadStats(){const st=await api('GET','/admin/stats');document.getElementById('stats-g').innerHTML=[{v:st.users||0,l:'USERS'},{v:st.products||0,l:'PRODUCTS'},{v:st.cart_items||0,l:'CART ITEMS'},{v:fmt(st.potential_revenue||0),l:'POTENTIAL',s:true}].map(s=>`<div class="card scard"><div class="sval" style="${s.s?'font-size:15px':''}">${s.v}</div><div class="slbl">${s.l}</div></div>`).join('');}
+async function loadStats(){const st=await api('GET','/admin/stats');document.getElementById('stats-g').innerHTML=[{v:st.users||0,l:'USERS'},{v:st.products||0,l:'PRODUCTS'},{v:st.cart_items||0,l:'CART ITEMS'},{v:fmt(st.potential_revenue||0),l:'POTENTIAL REV'}].map(s=>`<div class="card scard"><div class="sval" style="${String(s.v).length>7?'font-size:14px':''}">${s.v}</div><div class="slbl">${s.l}</div></div>`).join('');}
 function setTab(t){S.adminTab=t;S.editProd=null;S.showForm=false;['products','settings','carts'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('on',x===t));const tb=document.getElementById('tab-body');if(t==='products')tb.innerHTML=rTabP();if(t==='settings')tb.innerHTML=rTabS();if(t==='carts'){tb.innerHTML='<p style="color:var(--muted);padding:14px">Loading...</p>';loadCarts();}}
 
 // Products tab
