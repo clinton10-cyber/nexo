@@ -538,10 +538,15 @@ function rDetail(){
 }
 
 async function addCart(id){
-  if(!S.user)return;
+  if(!S.user){
+    const u=await api("POST","/users",{session_id:sid,name:localStorage.getItem("nx-name")||"Guest"});
+    if(u&&u.id){S.user=u;localStorage.setItem("nx-uid",u.id);localStorage.setItem("nx-name",u.name);}
+    else{toast("Session error, please refresh","err");return;}
+  }
   const p=S.products.find(x=>x.id===id);if(!p||p.stock===0)return;
-  await api('POST','/cart',{user_id:S.user.id,product_id:id});
-  await loadCart();toast(p.name+' added to cart','ok');
+  const r=await api("POST","/cart",{user_id:S.user.id,product_id:id});
+  if(r&&r.error){toast(r.error,"err");return;}
+  await loadCart();toast(p.name+" added to cart","ok");
 }
 async function rmItem(itemId){await api('DELETE','/cart/'+itemId);await loadCart();rCart();}
 async function updQty(itemId,delta){
